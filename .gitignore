@@ -127,3 +127,16 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# large files that github won't accept
+*.csv
+*.zip
+*.parquet
+*.orc
+*.hdf5
+*.feather
+*.dbf
+*.shp
+*.shx
+data/*
+
