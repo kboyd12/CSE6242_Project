@@ -1,4 +1,7 @@
 pandas
 pytest
 kaggle
+jupyterlab
+scipy
+pyarrow
 
