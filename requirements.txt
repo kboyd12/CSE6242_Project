@@ -4,4 +4,7 @@ kaggle
 jupyterlab
 scipy
 pyarrow
+dash
+plotly
+
 
