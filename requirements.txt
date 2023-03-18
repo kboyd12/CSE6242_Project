@@ -6,5 +6,9 @@ scipy
 pyarrow
 dash
 plotly
+autoflake
+flake8
+black
+isort
 
 

@@ -1,8 +1,6 @@
-from ...data.get_airport_locations import get_airport_locations
 import plotly.graph_objects as go
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
+
+from ...data.get_airport_locations import get_airport_locations
 
 
 def create_plot():

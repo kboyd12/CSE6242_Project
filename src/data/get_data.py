@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-import kaggle
 import os
+
+import kaggle
 
 
 def get_data(outdir: str = "data/raw") -> None:
