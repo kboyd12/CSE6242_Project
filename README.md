@@ -27,6 +27,10 @@ Once you have the json file in place, from root of project run:
 $`python ./src/data/get_data.py`  
 it may take a few minutes due to file size.  
 
+To run the visualization, from root of project run:
+$`python main.py`
+Navigate to [localhost:8050](http://localhost:8050) in your browser to view the page.
+
 
 
 # Project Structure:
