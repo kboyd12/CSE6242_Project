@@ -10,5 +10,6 @@ autoflake
 flake8
 black
 isort
+pyarrow
 
 
