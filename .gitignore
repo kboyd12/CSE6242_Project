@@ -140,3 +140,4 @@ dmypy.json
 *.shx
 data/*
 
+data/raw/btsdelay/readme.md
