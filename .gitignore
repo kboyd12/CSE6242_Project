@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 # large files that github won't accept
-*.csv
 *.zip
 *.parquet
 *.orc
