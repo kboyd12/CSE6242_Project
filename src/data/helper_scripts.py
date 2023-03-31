@@ -1,5 +1,7 @@
 import asyncio
+
 import pandas as pd
+
 from .get_airport_locations import build_flight_data
 
 

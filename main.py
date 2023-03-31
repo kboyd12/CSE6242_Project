@@ -1,19 +1,17 @@
-from src.viz.frontend.view import create_plot
-from src.data.get_airport_locations import build_flight_data, CURR_PATH
-import pandas as pd
-
-from dash import Dash, Input, Output
-from dash import dcc
-from dash import html
 import asyncio
 
+import pandas as pd
+from dash import Dash, dcc, html
+
+from src.data.get_airport_locations import CURR_PATH
+from src.viz.frontend.view import create_plot
 
 airline_list = (
     pd.read_csv(CURR_PATH.joinpath("src/data/airline_list.csv"))
     .Airline.sort_values()
     .to_list()
 )
-fig = asyncio.run(create_plot())
+fig = asyncio.run(create_plot(width=1200, height=1200))
 
 external_stylesheets = [
     {
@@ -53,8 +51,11 @@ app.layout = html.Div(
             className="menu",
         ),
         html.Div(
-            children=[html.Div(children=dcc.Graph(figure=fig, id="airport-chart"))],
-            className="card",
+            children=[
+                html.Div(
+                    children=dcc.Graph(figure=fig, id="airport-chart"), className="card"
+                )
+            ],
         ),
     ],
 )
