@@ -34,7 +34,7 @@ Navigate to [localhost:8050](http://localhost:8050) in your browser to view the 
 
 
 # Project Structure:
-.
+```bash
 ├── .gitignore  
 ├── README.md  
 ├── data  
@@ -47,3 +47,4 @@ Navigate to [localhost:8050](http://localhost:8050) in your browser to view the 
 │    ├── model          ml models etc.  
 │    └── viz            code to visualize data  
 └── tests               tests      
+```
