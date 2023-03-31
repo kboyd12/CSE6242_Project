@@ -4,7 +4,7 @@ from .get_airport_locations import build_flight_data
 
 
 async def main():
-    # Builds the list of unique airlines to avoid loading the full dataframe each time
+    """Builds the list of unique airlines to avoid loading the full dataframe each time"""
     df = await build_flight_data()
 
     pd.DataFrame(df.Airline.unique(), columns=["Airline"]).to_csv(

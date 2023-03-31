@@ -23,6 +23,7 @@ async def create_plot(width: int = 1200, height: int = 900) -> go.Figure:
             showlegend=False,
             width=width,
             height=height,
+            autosize=True,
             geo=dict(
                 projection_type="orthographic",
                 projection_rotation=dict(lon=-102.5795, lat=25.8283),
@@ -31,7 +32,7 @@ async def create_plot(width: int = 1200, height: int = 900) -> go.Figure:
                 showcountries=True,
                 landcolor="rgb(243,243,243)",
                 countrycolor="rgb(204,204,204)",
-                bgcolor="rgb(2,28,33)",
+                bgcolor="#070606",
                 oceancolor="#5b7882",
             ),
         ),

@@ -53,11 +53,8 @@ app.layout = html.Div(
             className="menu",
         ),
         html.Div(
-            children=[
-                html.Div(
-                    children=dcc.Graph(figure=fig, id="airport-chart"), className="card"
-                )
-            ]
+            children=[html.Div(children=dcc.Graph(figure=fig, id="airport-chart"))],
+            className="card",
         ),
     ],
 )
