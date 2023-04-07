@@ -2,43 +2,42 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv, GatedGraphConv, global_add_pool
 
-# data loaders
 import glob
 import os
+import sys
+import pandas as pd
 
 import torch
-from torch_geometric.data import Dataset, download_url
+from torch_geometric.data import Dataset, download_url, Data
 
-
+sys.setrecursionlimit(10_000)
 class FlightsDataset(Dataset):
     def __init__(self, root, transform=None, pre_transform=None, pre_filter=None,
-                 raw_path: str="../../data/raw/btsdelay/",
+                 raw_paths: str="../../data/raw/btsdelay/",
                  processed_dir: str="../../data/processed/btsdelay_torch_adjm/"):
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.raw_path = raw_path
+        self.raw_paths = raw_paths
         self.processed_dir = processed_dir
 
     @property
     def raw_file_names(self):
-        files = glob.glob(f"{self.raw_path}*.parquet")
+        files = glob.glob(f"{self.raw_paths}*.parquet")
         return files
 
     @property
     def processed_file_names(self):
         return glob.glob(f"{self.processed_dir}*.npz")
-
+    
     def process(self):
-        for idx, raw_path in enumerate(self.raw_paths):
-            # Read data from `raw_path`.
-            file_path = self.file_paths[idx]
-            df = pd.read_parquet(file_path)
+        for idx, file in enumerate(self.raw_paths):
+            # Read data from `raw_paths`.
+            df = pd.read_parquet(file)
             data = torch.from_numpy(df.to_numpy()).float()
 
-            if self.pre_filter is not None and not self.pre_filter(data):
-                continue
-            if self.pre_transform is not None:
-                data = self.pre_transform(data)
-            torch.save(data, os.path.join(self.processed_dir, f'data_{idx}.pt'))
+            timestamp = file[-20:]
+            torch_data = Data(edge_index=data, pos=timestamp)
+
+            torch.save(torch_data, os.path.join(self.processed_dir, f'data_{idx}.pt'))
 
     def len(self):
         return len(self.processed_file_names)
