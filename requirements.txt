@@ -11,5 +11,5 @@ flake8
 black
 isort
 pyarrow
-
+netCDF4
 
