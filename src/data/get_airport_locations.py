@@ -47,4 +47,4 @@ async def get_airport_locations(
 
 
 if __name__ == "__main__":
-    asyncio.run(get_airport_locations())
+    df = asyncio.run(build_flight_data())
