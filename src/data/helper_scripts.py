@@ -2,7 +2,8 @@ import asyncio
 
 import pandas as pd
 
-from .get_airport_locations import build_flight_data, get_airport_locations
+from .get_airport_locations import build_flight_data
+from .get_airport_locations import get_airport_locations
 
 
 async def build_ariline_list():

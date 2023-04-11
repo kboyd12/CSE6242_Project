@@ -1,4 +1,5 @@
 import asyncio
+
 import plotly.graph_objects as go
 
 from ...data.get_airport_locations import get_airport_locations
@@ -6,7 +7,7 @@ from ...data.helper_scripts import flight_trace_locations_df
 
 
 async def trace_lines() -> go.Scattergeo:
-    df = await flight_trace_locations_df()
+    await flight_trace_locations_df()
     return go.Scattergeo()
 
 
