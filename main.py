@@ -1,17 +1,17 @@
 import asyncio
 
 import pandas as pd
-from dash import Dash, dcc, html
+from dash import Dash, Input, Output, dcc, html
 
 from src.data.get_airport_locations import CURR_PATH
-from src.viz.frontend.view import create_plot
+from src.viz.frontend.view import create_plot, trace_lines
 
 airline_list = (
     pd.read_csv(CURR_PATH.joinpath("src/data/airline_list.csv"))
     .Airline.sort_values()
     .to_list()
 )
-fig = asyncio.run(create_plot(width=1200, height=1200))
+fig = asyncio.run(create_plot())
 
 external_stylesheets = [
     {
@@ -56,7 +56,6 @@ app.layout = html.Div(
                     children=dcc.Graph(
                         figure=fig,
                         id="airport-chart",
-                        # style={"height": "1200px", "width": "1200px", "margin": "0px"},
                     ),
                     className="card",
                 )
@@ -64,6 +63,15 @@ app.layout = html.Div(
         ),
     ],
 )
+
+
+@app.callback(Output("airport-chart", "figure"), [Input("airport-chart", "clickData")])
+def on_map_click(click_data):
+    if len(fig.data) > 1:
+        fig.data = [fig.data[0]]
+    if click_data is not None:
+        fig.add_traces(trace_lines(click_data["points"][0]["customdata"]))
+    return fig
 
 
 if __name__ == "__main__":

@@ -8,6 +8,8 @@ from ...data.helper_scripts import flight_trace_locations_df
 import numpy as np
 import pandas as pd
 
+flight_trace_df = asyncio.run(flight_trace_locations_df())
+
 
 def start_end_array(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
     lons = np.empty(3 * len(df))
@@ -24,8 +26,10 @@ def start_end_array(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
     return (lats, lons)
 
 
-async def trace_lines() -> go.Scattermapbox:
-    df = await flight_trace_locations_df()
+def trace_lines(
+    iata_code: str, lookup_df: pd.DataFrame = flight_trace_df
+) -> go.Scattermapbox:
+    df = lookup_df[lookup_df.Origin == iata_code]
     lat, lon = start_end_array(df)
 
     line_trace = go.Scattermapbox(
@@ -34,26 +38,28 @@ async def trace_lines() -> go.Scattermapbox:
         mode="lines",
         line=dict(width=1, color="red"),
         opacity=0.3,
+        below="Airports",
+        name="Flight Paths",
     )
 
     return line_trace
 
 
-async def create_plot(width: int = 1200, height: int = 900) -> go.Figure:
+async def create_plot() -> go.Figure:
     df = await get_airport_locations()
 
     trace = go.Scattermapbox(
-        # locationmode="USA-states",
         lon=df.longitude_deg,
         lat=df.latitude_deg,
         hoverinfo="text",
         text=df.name,
         mode="markers",
         marker=dict(size=3, color="rgb(255,0,0)"),
+        customdata=df.iata_code,
+        name="Airports",
     )
 
     fig = go.Figure(trace)
-    fig.add_trace(await trace_lines())
 
     fig.update_layout(
         mapbox=dict(
@@ -62,27 +68,6 @@ async def create_plot(width: int = 1200, height: int = 900) -> go.Figure:
             zoom=3.5,
         )
     )
-    # fig = go.Figure(
-    #     data=[trace],
-    #     layout=go.Layout(
-    #         # title_text="Placeholder Title for Now",  # TODO
-    #         showlegend=False,
-    #         width=width,
-    #         height=height,
-    #         autosize=True,
-    #         geo=dict(
-    #             projection_type="orthographic",
-    #             projection_rotation=dict(lon=-102.5795, lat=25.8283),
-    #             showland=True,
-    #             showocean=True,
-    #             showcountries=True,
-    #             landcolor="rgb(243,243,243)",
-    #             countrycolor="rgb(204,204,204)",
-    #             bgcolor="#070606",
-    #             oceancolor="#5b7882",
-    #         ),
-    #     ),
-    # )
 
     return fig
 
