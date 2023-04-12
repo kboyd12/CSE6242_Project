@@ -1,14 +1,42 @@
 import asyncio
+from typing import Tuple
 
 import plotly.graph_objects as go
 
 from ...data.get_airport_locations import get_airport_locations
 from ...data.helper_scripts import flight_trace_locations_df
+import numpy as np
+import pandas as pd
 
 
-async def trace_lines() -> go.Scattergeo:
-    await flight_trace_locations_df()
-    return go.Scattergeo()
+def start_end_array(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+    lons = np.empty(3 * len(df))
+    lats = np.empty(3 * len(df))
+
+    lons[::3] = df.longitude_deg_origin
+    lons[1::3] = df.longitude_deg_dest
+    lons[2::3] = None
+
+    lats[::3] = df.latitude_deg_origin
+    lats[1::3] = df.latitude_deg_dest
+    lats[2::3] = None
+
+    return (lats, lons)
+
+
+async def trace_lines() -> go.Scattermapbox:
+    df = await flight_trace_locations_df()
+    lat, lon = start_end_array(df)
+
+    line_trace = go.Scattermapbox(
+        lon=lon,
+        lat=lat,
+        mode="lines",
+        line=dict(width=1, color="red"),
+        opacity=0.3,
+    )
+
+    return line_trace
 
 
 async def create_plot(width: int = 1200, height: int = 900) -> go.Figure:
@@ -25,6 +53,7 @@ async def create_plot(width: int = 1200, height: int = 900) -> go.Figure:
     )
 
     fig = go.Figure(trace)
+    fig.add_trace(await trace_lines())
 
     fig.update_layout(
         mapbox=dict(
