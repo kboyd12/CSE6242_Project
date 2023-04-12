@@ -27,6 +27,9 @@ async def get_airport_locations(
 
     LOCATION_URI = "https://davidmegginson.github.io/ourairports-data/airports.csv"
 
+    if not CURR_PATH.joinpath("data/raw/locations").exists():
+        CURR_PATH.joinpath("data/raw/locations").mkdir()
+
     outfile = CURR_PATH.joinpath(outdir).joinpath("locations.parquet")
 
     if outfile.exists():
