@@ -130,7 +130,6 @@ dmypy.json
 
 # large files that github won't accept
 *.zip
-*.parquet
 *.orc
 *.hdf5
 *.feather

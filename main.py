@@ -68,9 +68,11 @@ app.layout = html.Div(
 @app.callback(Output("airport-chart", "figure"), [Input("airport-chart", "clickData")])
 def on_map_click(click_data):
     if len(fig.data) > 1:
-        fig.data = [fig.data[0]]
+        fig.data = [fig.data[1]]
     if click_data is not None:
         fig.add_traces(trace_lines(click_data["points"][0]["customdata"]))
+        fig.data = [fig.data[1], fig.data[0]]
+
     return fig
 
 
