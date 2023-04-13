@@ -21,7 +21,7 @@ async def build_flight_data(
 
 
 async def get_airport_locations(
-    indir: str = "data/raw/btsdelay", outdir: str = "data/raw/locations"
+    indir: str = "data/raw/btsdelay", outdir: str = "src/data/"
 ) -> pd.DataFrame:
     """Grabs a csv database of airport locations from github and matches the ones in our dataset"""
 
