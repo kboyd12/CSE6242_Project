@@ -3,11 +3,12 @@ import torch.nn as nn
 import torch.optim as optim
 from torch_geometric.data import DataLoader
 
-from graph_ts import FlightsDataset, TimeSeriesConvolutionalGraphModel
+from graph_ts_simple import FlightsDataset, TimeSeriesConvolutionalGraphModel
 
 
 def train():
-    a = "b"
+    """"
+    """
     dataset = FlightsDataset(root='./data/processed/btsdelay_torch_adjm/', 
                              transform=None)
 

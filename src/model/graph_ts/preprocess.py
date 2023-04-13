@@ -4,9 +4,12 @@ import xarray as xr
 import scipy.sparse as sp
 import glob
 import os
+from tqdm import tqdm
+import pyarrow.parquet as pq
 
-filedir_path = "../../data/raw/btsdelay/"
-files = glob.glob(f"{filedir_path}*.parquet")
+
+filedir_path = os.path.join(os.getcwd(), 'data', 'raw', 'btsdelay')
+files = glob.glob(os.path.join(filedir_path, "Combined_Flights_*.parquet"))
 
 def construct_adj_mat(flights: pd.DataFrame) -> pd.DataFrame:
     """ajd matrix of form Aij => flight from i to j, id est rows are origin, cols are dest """
@@ -40,13 +43,21 @@ def construct_adj_mat(flights: pd.DataFrame) -> pd.DataFrame:
 
 def adj_mat_to_file(adj_mat: xr.DataArray=None, filepath: str=None) -> None:
     if not filepath:
-        filepath = os.path.join(os.path.dir(os.getcwd()), "data", "processed", "flight_ts_graphs")
+        filepath = os.path.join(os.getcwd(), "data", "processed", "flight_ts_graphs")
     os.makedirs(filepath, exist_ok=True)
     amt = adj_mat.transpose('timestamp', ...)
     for hr in amt:
         coo_adj_mat = sp.coo_matrix(hr.values)
         sp.save_npz(os.path.join(filepath, f"file_{hr.timestamp.item()}.npz"), coo_adj_mat, compressed=True)
+    return None
 
-
+if __name__ == "__main__":
+    columns = ['ArrDelay', 'FlightDate', 'CRSDepTime', 'Origin', 'Dest',]
     for file in files:
-    adj_mat_to_file(construct_adj_mat(file))
+            parquet_file = pq.ParquetFile(file)
+            for batch_i, batch in enumerate(tqdm(parquet_file.iter_batches(columns=columns))):
+                batch_df = batch.to_pandas()
+                adj_mat = construct_adj_mat(batch.to_pandas())
+                adj_mat_to_file(adj_mat)
+
+        
