@@ -139,3 +139,5 @@ dmypy.json
 data/*
 
 data/raw/btsdelay/readme.md
+src/EDA/rf_model.pkl
+src/EDA/jg_eda_model.ipynb
