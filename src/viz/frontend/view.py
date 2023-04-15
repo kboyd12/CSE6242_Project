@@ -1,12 +1,12 @@
 import asyncio
 from typing import Tuple
 
+import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
 
 from ...data.get_airport_locations import get_airport_locations
 from ...data.helper_scripts import flight_trace_locations_df
-import numpy as np
-import pandas as pd
 
 flight_trace_df = asyncio.run(flight_trace_locations_df())
 

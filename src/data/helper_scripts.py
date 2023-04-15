@@ -1,8 +1,6 @@
-import asyncio
-
-import pandas as pd
 from pathlib import Path
 
+import pandas as pd
 
 from .get_airport_locations import build_flight_data
 from .get_airport_locations import get_airport_locations
@@ -54,4 +52,4 @@ async def flight_trace_locations_df(outfile: str = "src/data/flight_traces.parqu
 
 
 if __name__ == "__main__":
-    asyncio.run(build_ariline_list())
+    pass
