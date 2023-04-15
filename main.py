@@ -1,7 +1,8 @@
 import asyncio
+import json
 
 import pandas as pd
-from dash import Dash, Input, Output, dcc, html
+from dash import Dash, Input, Output, State, dcc, html
 
 from src.data.get_airport_locations import CURR_PATH
 from src.viz.frontend.view import create_plot, trace_lines
@@ -65,13 +66,28 @@ app.layout = html.Div(
 )
 
 
-@app.callback(Output("airport-chart", "figure"), [Input("airport-chart", "clickData")])
-def on_map_click(click_data):
-    if len(fig.data) > 1:
+@app.callback(
+    Output("airport-chart", "figure"),
+    [Input("airport-chart", "clickData")],
+    [State("airport-chart", "figure")],
+)
+def on_map_click(click_data, map_state):
+    if len(fig.data) > 1:  # type: ignore
         fig.data = [fig.data[1]]
     if click_data is not None:
         fig.add_traces(trace_lines(click_data["points"][0]["customdata"]))
         fig.data = [fig.data[1], fig.data[0]]
+
+        fig.update_layout(
+            mapbox=dict(
+                style="carto-positron",
+                center=dict(
+                    lat=click_data["points"][0]["lat"],
+                    lon=click_data["points"][0]["lon"],
+                ),
+                zoom=map_state["layout"]["mapbox"]["zoom"],
+            )
+        )
 
     return fig
 
