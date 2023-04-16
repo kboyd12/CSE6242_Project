@@ -1,17 +1,22 @@
 import asyncio
 import json
+import calendar
 
 import pandas as pd
 from dash import Dash, Input, Output, State, dcc, html
 
 from src.data.get_airport_locations import CURR_PATH
 from src.viz.frontend.view import create_plot, trace_lines
+from src.model.model_utils import load_model, predictions
 
 airline_list = (
     pd.read_csv(CURR_PATH.joinpath("src/data/airline_list.csv"))
     .Airline.sort_values()
     .to_list()
 )
+
+model = load_model()
+
 fig = asyncio.run(create_plot())
 
 external_stylesheets = [
@@ -31,7 +36,10 @@ app.layout = html.Div(
             children=[
                 html.H1(children="Team 154 CSE 6242 Project", className="header-title"),
                 html.P(
-                    children="Flight Delay Model, TODO", className="header-description"
+                    children="""
+                    Choose your preferred airline and Month of flight in the dropdowns, then click on an airport in the map to view chance of delay
+                    """,
+                    className="header-description",
                 ),
             ],
             className="header",
@@ -48,9 +56,21 @@ app.layout = html.Div(
                     clearable=False,
                     className="dropdown",
                 ),
+                html.Div(children="Month", className="menu-title"),
+                dcc.Dropdown(
+                    id="month-filter",
+                    options=[
+                        {"label": month, "value": month}
+                        for month in list(calendar.month_name)[1:]
+                    ],
+                    value="January",
+                    clearable=False,
+                    className="dropdown",
+                ),
             ],
             className="menu",
         ),
+        html.Div(id="asdf", className="prediction-container"),
         html.Div(
             children=[
                 html.Div(
@@ -59,11 +79,39 @@ app.layout = html.Div(
                         id="airport-chart",
                     ),
                     className="card",
-                )
+                ),
             ],
         ),
     ],
 )
+
+
+@app.callback(
+    Output("asdf", "children"),
+    Input("airport-chart", "clickData"),
+    State("airline-filter", "value"),
+    State("month-filter", "value"),
+)
+def display_click_data(click_data, drop_val_1, drop_val_2):
+    if click_data is not None:
+        origin = click_data["points"][0]["customdata"]
+        airline = drop_val_1
+        month = list(calendar.month_name).index(drop_val_2)
+
+        x, y = predictions(model, origin=[origin], airline=[airline], month=[month])
+
+        return html.Div(
+            children=[
+                html.H3("Probability of Delay > 5 Minutes", id="predictions-title"),
+                html.P(
+                    f"From: {origin} Airport | {x}% Chance of No Delay -- {y}% Chance of >5 Minute Delay",
+                    id="predicted-delay",
+                ),
+            ],
+            className="predictions",
+        )
+    else:
+        return html.Div()
 
 
 @app.callback(
