@@ -26,8 +26,8 @@ Choose the airline and preferred month of travel from the drop down menus, then 
 paths to connecting airports along with probability of delay.
 
 
-<img src="./assets/AAL_ATL.png" style="width:100%">
-<figcaption style="text-align: center; font-size: 13px; margin: auto;"><i>American Airlines Delay Probability from ATL</i></figcaption> 
+![demo](./assets/AAL_ATL.png)
+<p style="text-align: center; font-size: 13px; margin: auto;"><i>American Airlines Delay Probability from ATL</i></p> 
 
 
 # Get Data
