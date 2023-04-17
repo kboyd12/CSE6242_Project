@@ -27,7 +27,7 @@ paths to connecting airports along with probability of delay.
 
 
 ![demo](./assets/AAL_ATL.png)
-<p style="text-align: center; font-size: 13px; margin: auto;"><i>American Airlines Delay Probability from ATL</i></p> 
+<p align="center"><i>American Airlines Delay Probability from ATL</i></p> 
 
 
 # Get Data
