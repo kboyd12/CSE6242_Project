@@ -1,5 +1,4 @@
 import asyncio
-import json
 import calendar
 
 import pandas as pd
@@ -141,4 +140,4 @@ def on_map_click(click_data, map_state):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, use_reloader=True)
+    app.run_server(use_reloader=True)
