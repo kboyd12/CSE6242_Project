@@ -1,7 +1,8 @@
 import pickle
-from typing import List
-import pandas as pd
 from pathlib import Path
+from typing import List
+
+import pandas as pd
 
 p = Path(__file__)
 
