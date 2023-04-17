@@ -1,7 +1,7 @@
 body {
 	font-family: "Lato", sans-serif;
 	margin: 0;
-	background-color: #F7F7F7;
+	background-color: #dddddd;
 }
 
 .header {
@@ -41,6 +41,7 @@ body {
 	margin-right: 55px;
 	box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.18);
 	display: flex;
+  background-color: #eeeeee;
 	justify-content: center;
 }
 
@@ -85,7 +86,7 @@ body {
 .prediction-container {
   position: absolute;
   left: 50%;
-  top: 18.3%;
+  top: 284px;
   transform: translate(-50%, -50%);
   width: 700px;
   height: 90px;

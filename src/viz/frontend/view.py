@@ -67,7 +67,8 @@ async def create_plot() -> go.Figure:
             center=dict(lat=df.latitude_deg.mean(), lon=df.longitude_deg.mean()),
             zoom=3.5,
         ),
-        paper_bgcolor="#F7F7F7",
+        paper_bgcolor="#eeeeee",
+        showlegend=False,
     )
 
     return fig
