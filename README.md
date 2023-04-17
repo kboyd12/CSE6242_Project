@@ -56,7 +56,7 @@ Once you have the json file in place, from root of project run:
 
 It may take a few minutes due to file size.  
 
-# Project Structure:
+# Project Structure
 ```
 ├── .gitignore  
 ├── README.md  
