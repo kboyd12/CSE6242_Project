@@ -1,11 +1,17 @@
 import asyncio
 import calendar
+import json
 
 import pandas as pd
 from dash import Dash, Input, Output, State, dcc, html
 
-from src.data.get_airport_locations import CURR_PATH
-from src.viz.frontend.view import create_plot, trace_lines
+from src.data.get_airport_locations import CURR_PATH, get_airport_locations
+from src.viz.frontend.view import (
+    create_plot,
+    trace_lines,
+    airport_points,
+    flight_trace_df,
+)
 from src.model.model_utils import load_model, predictions
 
 airline_list = (
@@ -13,6 +19,7 @@ airline_list = (
     .Airline.sort_values()
     .to_list()
 )
+airline_lookup = pd.read_parquet("src/data/airline_lookup.parquet")
 
 model = load_model()
 
@@ -51,7 +58,7 @@ app.layout = html.Div(
                     options=[
                         {"label": airline, "value": airline} for airline in airline_list
                     ],
-                    value=airline_list[0],
+                    value="Airline",
                     clearable=False,
                     className="dropdown",
                 ),
@@ -92,6 +99,9 @@ app.layout = html.Div(
     State("month-filter", "value"),
 )
 def display_click_data(click_data, drop_val_1, drop_val_2):
+    if drop_val_1 == "Airline":
+        return (html.H3("Choose an Airline for Predictions", id="predictions-title"),)
+
     if click_data is not None:
         origin = click_data["points"][0]["customdata"]
         airline = drop_val_1
@@ -115,23 +125,45 @@ def display_click_data(click_data, drop_val_1, drop_val_2):
 
 @app.callback(
     Output("airport-chart", "figure"),
-    [Input("airport-chart", "clickData")],
+    [Input("airport-chart", "clickData"), Input("airline-filter", "value")],
     [State("airport-chart", "figure")],
 )
-def on_map_click(click_data, map_state):
+def on_map_click(click_data, drop_val, map_state):
+    filtered_ports = None
+
+    if drop_val != "Airline":
+        mask = airline_lookup.Airline.apply(lambda x: drop_val in x)
+        filtered_df = airline_lookup[mask]
+        filtered_ports = list(filtered_df.Origin.unique()) + list(
+            filtered_df.Dest.unique()
+        )
+
+        airport_locations = asyncio.run(get_airport_locations())
+        df = airport_locations[airport_locations.iata_code.isin(filtered_ports)]
+
+        fig.update({"data": [airport_points(df)]})
+
     if len(fig.data) > 1:  # type: ignore
         fig.data = [fig.data[1]]
+
     if click_data is not None:
-        fig.add_traces(trace_lines(click_data["points"][0]["customdata"]))
+        if filtered_ports != None:
+            lookup_df = flight_trace_df[(flight_trace_df.Dest.isin(filtered_ports))]
+
+            fig.add_traces(
+                trace_lines(click_data["points"][0]["customdata"], lookup_df=lookup_df)
+            )
+        else:
+            fig.add_traces(trace_lines(click_data["points"][0]["customdata"]))
+
         fig.data = [fig.data[1], fig.data[0]]
+
+        print(json.dumps(map_state["layout"], indent=4))
 
         fig.update_layout(
             mapbox=dict(
                 style="carto-positron",
-                center=dict(
-                    lat=click_data["points"][0]["lat"],
-                    lon=click_data["points"][0]["lon"],
-                ),
+                center=map_state["layout"]["mapbox"]["center"],
                 zoom=map_state["layout"]["mapbox"]["zoom"],
             )
         )
@@ -140,4 +172,4 @@ def on_map_click(click_data, map_state):
 
 
 if __name__ == "__main__":
-    app.run_server(use_reloader=True)
+    app.run_server(debug=True, use_reloader=True)
