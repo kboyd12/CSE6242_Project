@@ -158,8 +158,6 @@ def on_map_click(click_data, drop_val, map_state):
 
         fig.data = [fig.data[1], fig.data[0]]
 
-        print(json.dumps(map_state["layout"], indent=4))
-
         fig.update_layout(
             mapbox=dict(
                 style="carto-positron",
