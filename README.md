@@ -5,7 +5,8 @@ Team 154 Project for CSE6242
 
 ### Setup
 1. Create virtual environment (should only need to do once):  
-    `python -m venv ./venv`  (or `python3`)  
+    `python -m venv ./venv`  (or `python3`)
+    `cd ./venv`
 
 2. Activate virtual environment (do each session)  
 Windows: `source ./venv/Scripts/activate`  
