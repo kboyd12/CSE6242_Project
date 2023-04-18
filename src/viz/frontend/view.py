@@ -45,10 +45,8 @@ def trace_lines(
     return line_trace
 
 
-async def create_plot() -> go.Figure:
-    df = await get_airport_locations()
-
-    trace = go.Scattermapbox(
+def airport_points(df: pd.DataFrame) -> go.Scattermapbox:
+    return go.Scattermapbox(
         lon=df.longitude_deg,
         lat=df.latitude_deg,
         hoverinfo="text",
@@ -58,6 +56,12 @@ async def create_plot() -> go.Figure:
         customdata=df.iata_code,
         name="Airports",
     )
+
+
+async def create_plot() -> go.Figure:
+    df = await get_airport_locations()
+
+    trace = airport_points(df)
 
     fig = go.Figure(trace)
 
