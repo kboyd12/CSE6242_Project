@@ -52,7 +52,7 @@ def airport_points(df: pd.DataFrame) -> go.Scattermapbox:
         hoverinfo="text",
         text=df.name,
         mode="markers",
-        marker=dict(size=3, color="rgb(255,0,0)"),
+        marker=dict(size=4, color="rgb(255,0,0)"),
         customdata=df.iata_code,
         name="Airports",
     )
