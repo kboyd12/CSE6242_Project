@@ -10,7 +10,7 @@ Team 154 Project for CSE6242
     `cd ./venv`
 
 2. Activate virtual environment (do each session)  
-Windows: `source ./venv/Scripts/activate`  
+Windows: `./Scripts/activate`  
 Linux: `source ./bin/activate`
 
 3. install packages (do at start, and when requirements.txt changes)  
