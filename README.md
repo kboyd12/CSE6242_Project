@@ -1,5 +1,12 @@
 # CSE6242 Project
-Team 154 Project for CSE6242
+**Team 154 Project for CSE6242**
+
+Every year, flight delays cost airlines, passengers, and businesses billions of dollars. While much research has been done to predict
+flight delays, the results of such research have often lacked a robust visual component making it challenging for most to make sense
+of the data.
+
+Our project aims to solve the visualization issue by creating an interactive visual model that allows users to review flight delay probabilities across geography and time.
+
 
 # How to use
 
