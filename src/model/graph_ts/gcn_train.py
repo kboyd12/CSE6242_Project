@@ -1,30 +1,31 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch_geometric.data import DataLoader
+from torch_geometric.loader import DataLoader
 
-from graph_ts_simple import FlightsDataset, TimeSeriesConvolutionalGraphModel
+from graph_ts_simple import DelayGraphDataset, TimeSeriesConvolutionalGraphModel
 
 
 def train():
     """"
     """
-    dataset = FlightsDataset(root='./data/processed/btsdelay_torch_adjm/', 
-                             transform=None)
+    dataset = DelayGraphDataset()
 
     # Create a data loader
     loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
     # Instantiate the model
+    num_features = 356
     in_channels = num_features
     hidden_channels = 64
-    out_channels = num_classes
+    out_channels = num_features
     kernel_size = 3
     stride = 1
     num_layers = 3
     dropout = 0.1
 
-    model = TimeSeriesConvolutionalGraphModel(in_channels, hidden_channels, out_channels, kernel_size, stride, num_layers, dropout)
+    model = TimeSeriesConvolutionalGraphModel(in_channels, hidden_channels, out_channels, kernel_size, 
+                                              stride, num_layers, dropout)
 
     # Define the loss function and optimizer
     criterion = nn.CrossEntropyLoss()

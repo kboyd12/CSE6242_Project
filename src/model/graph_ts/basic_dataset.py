@@ -3,35 +3,57 @@ from torch.utils.data import Dataset
 import os
 import glob
 import pandas as pd
-import pyarrow.parquet as pq
+import numpy as np
+from torch_geometric.data import Dataset, download_url, Data
+import pickle
 
-
-class MyDataset(Dataset):
-    def __init__(self, file_path=os.path.join(os.getcwd(), "data", "raw", "btsdelay")):
+class DelayGraphDataset(Dataset):
+    def __init__(self, file_path=os.path.join(os.getcwd(), "data", "processed", "flight_ts_graphs")):
         """
         Args:
             file_path (str): Path to the file containing the data samples.
         """
-        self.file_path = os.path.join(os.getcwd(), file_path)
+        self.file_path = file_path
         self.data = []
         
         # Load data from disk
-        files = glob.glob(os.path.join(self.file_path, "*.parquet"))
-        for file_i, file in enumerate(files):    
-            parquet_file = pq.ParquetFile(file)
-            for batch_i, batch in enumerate(parquet_file.iter_batches()):
-                batch_df = batch.to_pandas()
-                print("batch_df:", batch_df.shape)
-    
-                data = torch.from_numpy(batch_df.to_numpy()).float()
-                timestamp = file[-20:]
-                torch_data = Data(edge_index=data, pos=timestamp)
-            torch.save(torch_data, os.path.join(self.processed_dir, f'data_{file_i}{batch_i}.pt'))
+
+    def process(self, file):
+        print(processing)
+        #files = glob.glob(os.path.join(self.file_path, "*.npz"))
+        with open(os.path.join(self.file_path, "columns"), 'rb') as f:
+            columns = pickle.load(f)
+        #for file_i, file in enumerate(files):    
+        read_file = np.load(file)
+        df = pd.DataFrame(data=read_file['data'], columns=columns)
+
+        data = torch.from_numpy(df.to_numpy()).float()
+        timestamp = file[-20:]
+        torch_data = Data(edge_index=data, pos=timestamp)
+        torch.save(torch_data, os.path.join(self.processed_dir, f'data_{timestamp}.pt'))
+        return torch_data
 
                 
-    def __len__(self):
-        return len(self.data)
+    @property
+    def processed_file_names(self):
+        files = glob.glob(os.path.join(self.file_path, "*.pt"))
+        return files
     
+    @property
+    def raw_file_names(self):
+        files = glob.glob(os.path.join(self.file_path, "*.npz"))
+        return files
+
+    #@property
+    def len(self):
+        return len(self.raw_file_names)
+    
+    def __len__(self):
+        return len(self.raw_file_names)
+    
+    def get(self):
+        return 42
+
     def __getitem__(self, index):
         """
         Args:
@@ -40,14 +62,11 @@ class MyDataset(Dataset):
         Returns:
             tuple: A tuple containing the data sample and its label (if available).
         """
+        self.data = self.raw_file_names
         sample = self.data[index]
-        # Assuming the last value in each line is the label
-        label = int(sample[-1])
-        # Convert data values to torch tensors (if needed)
-        data = torch.tensor([float(val) for val in sample[:-1]])
-        return data, label
+        return self.process(sample)
 
-mydataset = MyDataset()
+mydataset = DelayGraphDataset()
 data_loader = torch.utils.data.DataLoader(mydataset, batch_size=2,
-                                          #num_samples=2,
                                           shuffle=True, num_workers=2)
+print(data_loader)
